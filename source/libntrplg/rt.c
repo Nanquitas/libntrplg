@@ -13,7 +13,7 @@ void rtInitLock(RT_LOCK *lock) {
 
 void rtAcquireLock(RT_LOCK *lock) {
 	while(lock->value != 0) {
-		svcSleepThread(1000000);
+		svc_SleepThread(1000000);
 	}
 	lock->value = 1;
 }
@@ -119,8 +119,7 @@ u16 rtIntToPortNumber(u16 x) {
 #endif
 
 u32 rtGetFileSize(u8* fileName) {
-	Handle hFile;
-	u32 size, ret;
+	u32 hFile, size, ret;
 	u64 size64 ;
 
 	FS_Path testPath = (FS_Path){3, strlen(fileName) + 1, fileName};
@@ -130,7 +129,7 @@ u32 rtGetFileSize(u8* fileName) {
 		hFile = 0;
 		goto final;
 	}
-	ret = FSFILE_GetSize(hFile, &size64);
+	ret = FILE_GetSize(hFile, &size64);
 	if (ret != 0) {
 		nsDbgPrint("FSFILE_GetSize failed: %08x\n", ret, 0);
 		goto final;
@@ -139,7 +138,7 @@ u32 rtGetFileSize(u8* fileName) {
 
 final:
 	if (hFile != 0) {
-		svcCloseHandle(hFile);
+		svc_closeHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -148,9 +147,10 @@ final:
 }
 
 u32 rtLoadFileToBuffer(u8* fileName, u32* pBuf, u32 bufSize) {
-	u32 ret, size, tmp;
- 	Handle hFile;
+	u32 ret;
+	u32 hFile, size;
 	u64 size64;
+	u32 tmp;
 
 	FS_Path testPath = (FS_Path){3, strlen(fileName) + 1, fileName};
 	ret = FSUSER_OpenFileDirectly(&hFile, sdmcArchive, testPath, 7, 0);
@@ -182,7 +182,7 @@ u32 rtLoadFileToBuffer(u8* fileName, u32* pBuf, u32 bufSize) {
 
 final:
 	if (hFile != 0) {
-		svcCloseHandle(hFile);
+		svc_closeHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -212,7 +212,7 @@ void rtInitHook(RT_HOOK* hook, u32 funcAddr, u32 callbackAddr) {
 }
 
 u32 rtFlushInstructionCache(void* ptr, u32 size) {
-	return svcFlushProcessDataCache(0xffff8001, (u32)ptr, size);
+	return svc_flushProcessDataCache(0xffff8001, (u32)ptr, size);
 }
 
 void rtEnableHook(RT_HOOK* hook) {

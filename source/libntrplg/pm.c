@@ -1,8 +1,11 @@
 #include "global.h"
 
+void dumpKernel() {
+
+}
+
 Handle hCurrentProcess = 0;
 u32 currentPid = 0;
-
 
 u32 getCurrentProcessId() {
 	svcGetProcessId(&currentPid, 0xffff8001);
@@ -16,7 +19,7 @@ u32 getCurrentProcessHandle() {
 	if (hCurrentProcess != 0) {
 		return hCurrentProcess;
 	}
-	svcGetProcessId(&currentPid, 0xffff8001);
+	svc_getProcessId(&currentPid, 0xffff8001);
 	ret = svcOpenProcess(&handle, currentPid);
 	if (ret != 0) {
 		showDbg("openProcess failed, ret: %08x", ret, 0);
