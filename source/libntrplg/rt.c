@@ -1,25 +1,19 @@
-
 #include "global.h"
-#include <ctr/SOC.h>
+#include "func.h"
+#include <3ds.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>
 
-/*
-such lock
-much danger
-need repair
-wow
-*/
 void rtInitLock(RT_LOCK *lock) {
 	lock->value = 0;
 }
 
 void rtAcquireLock(RT_LOCK *lock) {
 	while(lock->value != 0) {
-		svc_sleepThread(1000000);
+		svcSleepThread(1000000);
 	}
 	lock->value = 1;
 }
@@ -40,7 +34,7 @@ u32 rtGetPageOfAddress(u32 addr) {
 u32 rtCheckRemoteMemoryRegionSafeForWrite(Handle hProcess, u32 addr, u32 size) {
 	u32 ret;
 	u32 startPage, endPage, page;
-	
+
 	startPage = rtGetPageOfAddress(addr);
 	endPage = rtGetPageOfAddress(addr + size - 1);
 
@@ -55,7 +49,7 @@ u32 rtCheckRemoteMemoryRegionSafeForWrite(Handle hProcess, u32 addr, u32 size) {
 
 u32 rtSafeCopyMemory(u32 dst, u32 src, u32 size) {
 	u32 ret;
-	
+
 	ret = rtCheckRemoteMemoryRegionSafeForWrite(0xffff8001, dst, size) ;
 	if (ret != 0) {
 		return ret;
@@ -70,7 +64,7 @@ u32 rtSafeCopyMemory(u32 dst, u32 src, u32 size) {
 
 #if USE_SOCKET
 
- 
+
 int rtRecvSocket(u32 sockfd, u8 *buf, int size)
 {
 	int ret, pos=0;
@@ -114,7 +108,7 @@ int rtSendSocket(u32 sockfd, u8 *buf, int size)
 u16 rtIntToPortNumber(u16 x) {
 	u8* buf;
 	u8 tmp;
-	
+
 	buf = (void*)&x;
 	tmp = buf[0];
 	buf[0] = buf[1];
@@ -122,14 +116,15 @@ u16 rtIntToPortNumber(u16 x) {
 	return *((u16*)buf);
 }
 
-#endif	
+#endif
 
 u32 rtGetFileSize(u8* fileName) {
-	u32 hFile, size, ret;
+	Handle hFile;
+	u32 size, ret;
 	u64 size64 ;
 
-	FS_path testPath = (FS_path){PATH_CHAR, strlen(fileName) + 1, fileName};
-	ret = FSUSER_OpenFileDirectly(fsUserHandle, &hFile, sdmcArchive, testPath, 7, 0);
+	FS_Path testPath = (FS_Path){3, strlen(fileName) + 1, fileName};
+	ret = FSUSER_OpenFileDirectly(&hFile, sdmcArchive, testPath, 7, 0);
 	if (ret != 0) {
 		nsDbgPrint("openFile failed: %08x\n", ret, 0);
 		hFile = 0;
@@ -144,7 +139,7 @@ u32 rtGetFileSize(u8* fileName) {
 
 final:
 	if (hFile != 0) {
-		svc_closeHandle(hFile);
+		svcCloseHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -153,19 +148,18 @@ final:
 }
 
 u32 rtLoadFileToBuffer(u8* fileName, u32* pBuf, u32 bufSize) {
-	u32 ret;
-	u32 hFile, size;
+	u32 ret, size, tmp;
+ 	Handle hFile;
 	u64 size64;
-	u32 tmp;
-	
-	FS_path testPath = (FS_path){PATH_CHAR, strlen(fileName) + 1, fileName};
-	ret = FSUSER_OpenFileDirectly(fsUserHandle, &hFile, sdmcArchive, testPath, 7, 0);
+
+	FS_Path testPath = (FS_Path){3, strlen(fileName) + 1, fileName};
+	ret = FSUSER_OpenFileDirectly(&hFile, sdmcArchive, testPath, 7, 0);
 	if (ret != 0) {
 		nsDbgPrint("openFile failed: %08x\n", ret, 0);
 		hFile = 0;
 		goto final;
 	}
-	
+
 	ret = FSFILE_GetSize(hFile, &size64);
 	if (ret != 0) {
 		nsDbgPrint("FSFILE_GetSize failed: %08x\n", ret, 0);
@@ -188,7 +182,7 @@ u32 rtLoadFileToBuffer(u8* fileName, u32* pBuf, u32 bufSize) {
 
 final:
 	if (hFile != 0) {
-		svc_closeHandle(hFile);
+		svcCloseHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -218,7 +212,7 @@ void rtInitHook(RT_HOOK* hook, u32 funcAddr, u32 callbackAddr) {
 }
 
 u32 rtFlushInstructionCache(void* ptr, u32 size) {
-	return svc_flushProcessDataCache(0xffff8001, (u32)ptr, size);
+	return svcFlushProcessDataCache(0xffff8001, (u32)ptr, size);
 }
 
 void rtEnableHook(RT_HOOK* hook) {

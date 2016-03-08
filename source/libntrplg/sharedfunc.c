@@ -1,7 +1,5 @@
 #include "global.h"
 
-
-
 void initSharedFunc() {
 
 	INIT_SHARED_FUNC(showDbg, 0);

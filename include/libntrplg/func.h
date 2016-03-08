@@ -1,18 +1,15 @@
 #ifndef FUNC_H
 #define FUNC_H
 
+#include "global.h"
 
 /* set RWX on remote process's memory */
 u32 protectRemoteMemory(Handle hProcess, void* addr, u32 size);
 /* set RWX on current process's memoroy */
 u32 protectMemory(void* addr, u32 size);
 
-
-
 extern Handle fsUserHandle;
-extern FS_archive sdmcArchive;
-
-
+extern FS_Archive sdmcArchive;
 
 #define MAX_PLUGIN_COUNT 32
 

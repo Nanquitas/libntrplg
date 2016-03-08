@@ -8,7 +8,6 @@ typedef struct _RT_LOCK {
 	vu32 value;
 } RT_LOCK;
 
-
 #define NS_CONFIGURE_ADDR	0x06000000
 
 typedef struct _RT_HOOK {
@@ -29,14 +28,12 @@ typedef struct _NS_BREAKPOINT {
 	u32 isEnabled;
 } NS_BREAKPOINT;
 
-
-
 typedef struct _NS_CONFIG {
 	u32 initMode;
 	u32 startupCommand;
 	u32 hSOCU;
 
-	u8* debugBuf; 
+	u8* debugBuf;
 	u32 debugBufSize;
 	u32 debugPtr;
 	u32 debugReady;
@@ -50,8 +47,6 @@ typedef struct _NS_CONFIG {
 	u32 sharedFunc[100];
 
 } NS_CONFIG;
-
-
 
 void nsDbgPrint (const char*	fmt,	...	);
 
@@ -76,7 +71,3 @@ u32 rtGenerateJumpCode(u32 dst, u32* buf);
 
 
 u32 nsAttachProcess(Handle hProcess, u32 remotePC, NS_CONFIG *cfg) ;
-
-
-
-
