@@ -13,7 +13,7 @@ void rtInitLock(RT_LOCK *lock) {
 
 void rtAcquireLock(RT_LOCK *lock) {
 	while(lock->value != 0) {
-		svc_SleepThread(1000000);
+		svcSleepThread(1000000);
 	}
 	lock->value = 1;
 }
@@ -138,7 +138,7 @@ u32 rtGetFileSize(u8* fileName) {
 
 final:
 	if (hFile != 0) {
-		svc_closeHandle(hFile);
+		svcCloseHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -182,7 +182,7 @@ u32 rtLoadFileToBuffer(u8* fileName, u32* pBuf, u32 bufSize) {
 
 final:
 	if (hFile != 0) {
-		svc_closeHandle(hFile);
+		svcCloseHandle(hFile);
 	}
 	if (ret != 0) {
 		return 0;
@@ -212,7 +212,7 @@ void rtInitHook(RT_HOOK* hook, u32 funcAddr, u32 callbackAddr) {
 }
 
 u32 rtFlushInstructionCache(void* ptr, u32 size) {
-	return svc_flushProcessDataCache(0xffff8001, (u32)ptr, size);
+	return svcFlushProcessDataCache(0xffff8001, (u32)ptr, size);
 }
 
 void rtEnableHook(RT_HOOK* hook) {
