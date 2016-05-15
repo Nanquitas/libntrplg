@@ -2,9 +2,6 @@
 .SUFFIXES:
 #---------------------------------------------------------------------------------
 
-DEVKITPRO = /Users/technick/devkitPro
-DEVKITARM = $(DEVKITPRO)/devkitARM
-
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
@@ -18,11 +15,11 @@ include $(DEVKITARM)/3ds_rules
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
-TARGET		:=	libntrplg
+TARGET		:=	$(shell basename $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source/libntrplg
+SOURCES		:=	source
 DATA		:=	data
-INCLUDES	:=	include/libntrplg
+INCLUDES	:=	include
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -91,7 +88,7 @@ all: $(BUILD)
 
 lib:
 	@[ -d $@ ] || mkdir -p $@
-
+	
 $(BUILD): lib
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
