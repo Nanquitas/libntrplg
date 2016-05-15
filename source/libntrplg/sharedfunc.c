@@ -1,6 +1,7 @@
 #include "global.h"
 
-void initSharedFunc() {
+void	initSharedFunc(void)
+{
 	INIT_SHARED_FUNC(showDbg, 0);
 	INIT_SHARED_FUNC(nsDbgPrint, 1);
 	INIT_SHARED_FUNC(plgRegisterMenuEntry, 2);
@@ -10,3 +11,4 @@ void initSharedFunc() {
 	INIT_SHARED_FUNC(xsprintf, 6);
 	INIT_SHARED_FUNC(controlVideo, 7);
 }
+
