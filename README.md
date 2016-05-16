@@ -1,7 +1,8 @@
 libntrplg
 =========
 
-C library for writting plugins on the NTR CFW 2.0.
+C library for writting plugins on the NTR CFW 2.X, 3.X.
+This version of the library is updated to be used with the last stable lictru.
 
 Examples
 =========
